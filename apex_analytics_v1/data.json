@@ -1,0 +1,8 @@
+[
+    {"month": "Jan", "loans_issued": 45000, "repayments": 38000, "defaults": 1200},
+    {"month": "Feb", "loans_issued": 52000, "repayments": 41000, "defaults": 1500},
+    {"month": "Mar", "loans_issued": 48000, "repayments": 45000, "defaults": 1100},
+    {"month": "Apr", "loans_issued": 61000, "repayments": 49000, "defaults": 2100},
+    {"month": "May", "loans_issued": 55000, "repayments": 52000, "defaults": 1800},
+    {"month": "Jun", "loans_issued": 67000, "repayments": 58000, "defaults": 2300}
+]
