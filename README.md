@@ -1,5 +1,6 @@
 # Apex Analytics Suite: Strategic Financial Monitoring
 *Developed by [Jessica Odurowa Danquah] | GNPC Scholar*
+*View the Live Suite here:** [http://apex-analytics.rf.gd/]
 
 This project serves as a technical demonstration of my transition from **Static Data Handling** to **Scalable Relational Database Management**, specifically designed to showcase readiness for the **MS in Business Analytics** at Wichita State University.
 
