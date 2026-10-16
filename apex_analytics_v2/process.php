@@ -1,23 +1,39 @@
 <?php
-// 1. Connection
-$conn = new mysqli("localhost", "root", "mysql", "apex_analytics");
+require_once __DIR__ . '/db.php';
 
-// 2. Get data from the form
-$month = $_POST['month_name'];
-$loans = $_POST['loans_issued'];
-$repay = $_POST['repayments'];
-$def = $_POST['defaults'];
-
-// 3. The SQL Query
-$sql = "INSERT INTO financial_data (month_name, loans_issued, repayments, defaults) 
-        VALUES ('$month', $loans, $repay, $def)";
-
-if ($conn->query($sql) === TRUE) {
-    // Redirect back to the dashboard to see the new bar!
-    header("Location: index.php");
-} else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: add_data.php');
+    exit;
 }
 
-$conn->close();
-?>
+// Only someone with the admin password can add data
+$given = $_POST['admin_password'] ?? '';
+if (!hash_equals(ADMIN_PASSWORD, $given)) {
+    header('Location: add_data.php?status=auth');
+    exit;
+}
+
+$month = trim($_POST['month_name'] ?? '');
+$loans = filter_var($_POST['loans_issued'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+$repay = filter_var($_POST['repayments'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+$defs  = filter_var($_POST['defaults'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+
+if ($month === '' || mb_strlen($month) > 30 || $loans === false || $repay === false || $defs === false) {
+    header('Location: add_data.php?status=bad');
+    exit;
+}
+
+$conn = db_connect();
+if (!$conn) {
+    header('Location: add_data.php?status=db');
+    exit;
+}
+
+$stmt = $conn->prepare("INSERT INTO `monthly_data` (`month_name`, `loans_issued`, `repayments`, `defaults`) VALUES (?, ?, ?, ?)");
+if (!$stmt || !$stmt->bind_param('siii', $month, $loans, $repay, $defs) || !$stmt->execute()) {
+    header('Location: add_data.php?status=db');
+    exit;
+}
+
+header('Location: add_data.php?status=ok');
+exit;
